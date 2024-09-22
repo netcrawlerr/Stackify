@@ -1,45 +1,38 @@
 <?php
-session_start(); // Start the session
-
-// Check if the user is already logged in
-if (isset($_SESSION['username'])) {
-    header("Location: welcome.php"); // Redirect to welcome page if logged in
-    exit();
-}
-
-// Initialize variables
+session_start();
 $error = '';
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve and sanitize input
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
 
     // Database connection
-    require 'database.php'; // Include your database connection
+    require 'database.php';
 
-    // Prepare and execute SQL statement
+    // Check if username already exists
     $stmt = $mysqli->prepare("SELECT * FROM users WHERE username = ? LIMIT 1");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Check if user exists
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-
-        // Verify the password (assuming it's hashed)
-        if (password_verify($password, $user['password'])) {
-            // Store username in session
+    if ($result->num_rows > 0) {
+        $error = "Username already taken.";
+    } elseif ($password !== $confirm_password) {
+        $error = "Passwords do not match.";
+    } else {
+        // Hash the password and insert the new user
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $mysqli->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+        $stmt->bind_param("ss", $username, $hashed_password);
+        if ($stmt->execute()) {
             $_SESSION['username'] = $username;
-            header("Location: welcome.php"); // Redirect to welcome page
+            header("Location: welcome.php");
             exit();
         } else {
-            $error = "Invalid password.";
+            $error = "Registration failed.";
         }
-    } else {
-        $error = "User not found.";
     }
 }
 ?>
@@ -49,13 +42,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS file -->
 </head>
 <body>
     <div class="container">
-        <h2><i class="fas fa-user-circle"></i> Login</h2>
+        <h2><i class="fas fa-user-plus"></i> Register</h2>
         <?php if ($error): ?>
             <p class="error"><?php echo $error; ?></p>
         <?php endif; ?>
@@ -64,9 +57,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="text" id="username" name="username" required>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-            <button type="submit">Login</button>
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+            <button type="submit">Register</button>
         </form>
-        <p>Don't have an account? <a href="register.php">Register here</a>.</p>
+        <p>Already have an account? <a href="login.php">Login here</a>.</p>
     </div>
 </body>
 </html>
