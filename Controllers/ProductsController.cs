@@ -1,4 +1,6 @@
+using backend.DTO;
 using backend.Interfaces;
+using backend.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -24,6 +26,22 @@ namespace backend.Controllers
                 return null;
             }
             return Ok(products);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult?> CreateProducts(
+            [FromBody] CreateProductsRequestDto createProductsRequestDto
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var productModel = createProductsRequestDto.ToProductsFromCreateDto();
+            await _products.CreateProductsAsync(productModel);
+
+            return Ok(productModel);
         }
     }
 }

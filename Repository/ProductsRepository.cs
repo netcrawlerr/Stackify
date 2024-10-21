@@ -14,11 +14,11 @@ public class ProductsRepository : IProducts
         _context = context;
     }
 
-    public async Task<Products> CreateProductsAsync(Products products)
+    public async Task<Products> CreateProductsAsync(Products productsModel)
     {
-        await _context.Products.AddAsync(products);
+        await _context.Products.AddAsync(productsModel);
         await _context.SaveChangesAsync();
-        return products;
+        return productsModel;
     }
 
     public async Task<List<Products>> GetProductsAsync()
