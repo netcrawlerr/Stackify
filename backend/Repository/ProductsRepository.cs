@@ -2,7 +2,7 @@ using backend.Data;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
-using Stackify.DTO;
+using backend.DTO;
 
 namespace backend.Repository;
 

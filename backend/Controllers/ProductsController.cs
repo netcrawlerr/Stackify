@@ -2,7 +2,6 @@ using backend.DTO;
 using backend.Interfaces;
 using backend.Mappers;
 using Microsoft.AspNetCore.Mvc;
-using Stackify.DTO;
 
 namespace backend.Controllers
 {

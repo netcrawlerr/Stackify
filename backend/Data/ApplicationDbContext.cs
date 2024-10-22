@@ -1,7 +1,6 @@
 using backend.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Stackify.Models;
 
 namespace backend.Data;
 

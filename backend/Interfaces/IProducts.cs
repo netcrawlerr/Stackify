@@ -1,5 +1,5 @@
 using backend.Models;
-using Stackify.DTO;
+using backend.DTO;
 
 namespace backend.Interfaces;
 

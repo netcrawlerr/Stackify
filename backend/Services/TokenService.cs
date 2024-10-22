@@ -2,10 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using Stackify.Interfaces;
-using Stackify.Models;
+using backend.Interfaces;
+using backend.Models;
 
-namespace Stackify.Services;
+namespace backend.Services;
 
 public class TokenService : ITokenService
 {

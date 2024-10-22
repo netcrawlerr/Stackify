@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Stackify.Models;
+namespace backend.Models;
 
 public class Users : IdentityUser { }

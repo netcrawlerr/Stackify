@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Stackify.DTO;
-using Stackify.Interfaces;
-using Stackify.Models;
-using Stackify.Services;
+using backend.DTO;
+using backend.Interfaces;
+using backend.Models;
 
-namespace Stackify.Controllers
+namespace backend.Controllers
 {
     [ApiController]
     [Route("api/account")]
