@@ -105,6 +105,8 @@ builder.Services.AddScoped<IProducts, ProductsRepository>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+builder.Services.AddScoped<IAdmin, AdminRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
