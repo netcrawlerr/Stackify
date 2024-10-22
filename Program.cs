@@ -1,15 +1,21 @@
 using backend.Data;
 using backend.Interfaces;
 using backend.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Stackify.Interfaces;
+using Stackify.Models;
+using Stackify.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
 
 // builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -44,6 +50,8 @@ builder.Services.AddSwaggerGen(options =>
     );
 });
 
+builder.Services.AddControllers();
+
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseMySql(
@@ -52,8 +60,51 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     );
 });
 
-// Register repository
+builder
+    .Services.AddIdentity<Users, IdentityRole>(options =>
+    {
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequiredLength = 8;
+    })
+    .AddEntityFrameworkStores<ApplicationDBContext>();
+
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme =
+            options.DefaultChallengeScheme =
+            options.DefaultForbidScheme =
+            options.DefaultScheme =
+            options.DefaultSignInScheme =
+            options.DefaultSignOutScheme =
+                JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                System.Text.Encoding.UTF8.GetBytes(
+                    builder.Configuration["JWT:SigningKey"]
+                        ?? throw new ArgumentNullException("JWT SigningKey is not configured")
+                )
+            ),
+        };
+    });
+
+// registering
+
 builder.Services.AddScoped<IProducts, ProductsRepository>();
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
@@ -65,6 +116,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
