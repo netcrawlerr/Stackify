@@ -1,14 +1,15 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using backend.DTO;
 using backend.Interfaces;
 using backend.Models;
+using backend.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/account")]
+    [Route("api/account/")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<Users> _userManager;
@@ -26,7 +27,7 @@ namespace backend.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpPost("/register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try
@@ -58,7 +59,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             if (!ModelState.IsValid)
