@@ -18,7 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Stackify API", Version = "v1" });
     options.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
@@ -54,7 +54,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseMySql(
-        "Server=127.0.0.1;Database=DOTNETCRUD;User=netcrawler;Password=netcrawler;",
+        builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 21))
     );
 });
