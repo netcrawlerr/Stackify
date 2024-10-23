@@ -29,5 +29,16 @@ namespace backend.Controllers
             }
             return Ok(users);
         }
+
+        [HttpPost("users/single")]
+        public async Task<IActionResult> GetSingleUser([FromBody] string username)
+        {
+            var user = await _admin.GetByUsernameAsync(username);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
     }
 }
