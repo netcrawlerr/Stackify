@@ -22,4 +22,9 @@ public class AdminRepository : IAdmin
         // return await _userManager.Users.ToListAsync();
         return await _userManager.Users.ToListAsync();
     }
+
+    public async Task<Users?> GetByUsernameAsync(string username)
+    {
+        return await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == username);
+    }
 }
