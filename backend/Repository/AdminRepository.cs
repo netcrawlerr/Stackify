@@ -27,4 +27,15 @@ public class AdminRepository : IAdmin
     {
         return await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == username);
     }
+
+    public async Task<IdentityResult> DeleteUsernameAsync(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+        {
+            return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+        }
+
+        return await _userManager.DeleteAsync(user);
+    }
 }

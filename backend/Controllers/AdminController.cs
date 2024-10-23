@@ -40,5 +40,18 @@ namespace backend.Controllers
             }
             return Ok(user);
         }
+
+        [HttpDelete("users")]
+        public async Task<IActionResult> DeleteUser([FromBody] string username)
+        {
+            var result = await _admin.DeleteUsernameAsync(username);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
+        }
     }
 }
