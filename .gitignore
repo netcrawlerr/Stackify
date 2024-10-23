@@ -27,7 +27,6 @@ x86/
 
 # ASP.NET Core files
 appsettings.Development.json
-appsettings.json
 appsettings.Production.json
 *.db
 
