@@ -61,3 +61,6 @@ dotnet-tools.json
 
 # Logs
 *.log
+backend/appsettings.json
+backend/appsettings.json
+backend/appsettings.json
