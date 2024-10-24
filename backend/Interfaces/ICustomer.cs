@@ -3,9 +3,9 @@ using backend.Models;
 
 namespace backend.Interfaces;
 
-public interface ICustomerService
+public interface ICustomer
 {
-    Task<Customer> CreateCustomerAsync(CustomerDto customerDto);
+    Task<Customer> CreateCustomerAsync(Customer customerModel);
     Task<Customer> GetCustomerByIdAsync(int id);
     Task<List<Customer>> GetAllCustomersAsync();
 }

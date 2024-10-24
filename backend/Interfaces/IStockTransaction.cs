@@ -5,6 +5,6 @@ namespace backend.Interfaces;
 
 public interface IStockTransaction
 {
-    Task<StockTransaction> CreateStockTransactionAsync(StockTransactionDto stockTransactionDto);
+    Task<StockTransaction> CreateStockTransactionAsync(StockTransaction stockTransactionModel);
     Task<List<StockTransaction>> GetAllStockTransactionsAsync();
 }
