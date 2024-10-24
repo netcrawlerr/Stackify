@@ -21,10 +21,6 @@ namespace backend.Controllers
         {
             var products = await _products.GetProductsAsync();
 
-            if (products == null)
-            {
-                return null;
-            }
             return Ok(products);
         }
 
@@ -38,6 +34,19 @@ namespace backend.Controllers
                 return NotFound();
             }
             return Ok(products.ToProductsDto());
+        }
+
+        [HttpGet]
+        [Route("name")]
+        public async Task<IActionResult> GetProductByName([FromRoute] string name)
+        {
+            var product = await _products.GetProductByNameAsync(name);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(product);
         }
 
         [HttpPost]

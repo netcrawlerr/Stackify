@@ -7,6 +7,7 @@ public interface IProducts
 {
     public Task<List<Products>> GetProductsAsync();
     public Task<Products?> GetSingleProductsAsync(int id);
+    public Task<Products?> GetProductByNameAsync(string name);
     public Task<Products> CreateProductsAsync(Products productsModel);
     public Task<Products?> UpdateProductsAsync(
         UpdateProductsRequestDto updateProductsRequestDto,

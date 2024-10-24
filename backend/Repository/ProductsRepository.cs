@@ -1,8 +1,8 @@
 using backend.Data;
+using backend.DTO;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
-using backend.DTO;
 
 namespace backend.Repository;
 
@@ -13,6 +13,16 @@ public class ProductsRepository : IProducts
     public ProductsRepository(ApplicationDBContext context)
     {
         _context = context;
+    }
+
+    public async Task<Products?> GetProductByNameAsync(string name)
+    {
+        var product = await _context.Products.FirstOrDefaultAsync(x => x.Name == name);
+        if (product == null)
+        {
+            return null;
+        }
+        return product;
     }
 
     public async Task<Products> CreateProductsAsync(Products productsModel)
