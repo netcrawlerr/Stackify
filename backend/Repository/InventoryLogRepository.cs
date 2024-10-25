@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repository;
 
-public class InventoryLogRepository : IInvertoryLog
+public class InventoryLogRepository : IInventoryLog
 {
     private readonly ApplicationDBContext _context;
 

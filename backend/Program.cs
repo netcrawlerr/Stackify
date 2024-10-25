@@ -102,10 +102,15 @@ builder
 // registering
 
 builder.Services.AddScoped<IProducts, ProductsRepository>();
+builder.Services.AddScoped<IOrder, OrderRepository>();
+builder.Services.AddScoped<IOrderItem, OrderItemRepository>();
+builder.Services.AddScoped<IAdmin, AdminRepository>();
+builder.Services.AddScoped<ICategory, CategoryRepository>();
+builder.Services.AddScoped<ICustomer, CustomerRepository>();
+builder.Services.AddScoped<IInventoryLog, InventoryLogRepository>();
+builder.Services.AddScoped<IStockTransaction, StockTransactionRepository>();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
-
-builder.Services.AddScoped<IAdmin, AdminRepository>();
 
 var app = builder.Build();
 

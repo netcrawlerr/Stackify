@@ -26,7 +26,7 @@ public class OrderRepository : IOrder
         return await _context.Order.ToListAsync();
     }
 
-    public async Task<Order> GetOrderByIdAsync(int id)
+    public async Task<Order?> GetOrderByIdAsync(int id)
     {
         return await _context.Order.FindAsync(id);
     }
