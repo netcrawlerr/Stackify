@@ -1,104 +1,102 @@
 using backend.DTO;
 using backend.Interfaces;
 using backend.Models;
-using backend.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.Controllers
+namespace backend.Controllers;
+
+[ApiController]
+[Route("api/account/")]
+public class AccountController : ControllerBase
 {
-    [ApiController]
-    [Route("api/account/")]
-    public class AccountController : ControllerBase
+    private readonly UserManager<Users> _userManager;
+    private readonly SignInManager<Users> _signinManager;
+    private readonly ITokenService _tokenService;
+
+    public AccountController(
+        UserManager<Users> userManager,
+        SignInManager<Users> signInManager,
+        ITokenService tokenService
+    )
     {
-        private readonly UserManager<Users> _userManager;
-        private readonly SignInManager<Users> _signinManager;
-        private readonly ITokenService _tokenService;
+        _userManager = userManager;
+        _signinManager = signInManager;
+        _tokenService = tokenService;
+    }
 
-        public AccountController(
-            UserManager<Users> userManager,
-            SignInManager<Users> signInManager,
-            ITokenService tokenService
-        )
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+    {
+        try
         {
-            _userManager = userManager;
-            _signinManager = signInManager;
-            _tokenService = tokenService;
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
-        {
-            try
-            {
-                if (
-                    string.IsNullOrEmpty(registerDto.UserName)
-                    || string.IsNullOrEmpty(registerDto.Password)
-                )
-                {
-                    return BadRequest("Username and Password are required");
-                }
-
-                var user = new Users { UserName = registerDto.UserName, Email = registerDto.Email };
-
-                var createdUser = await _userManager.CreateAsync(user, registerDto.Password);
-
-                if (createdUser.Succeeded)
-                {
-                    return Ok(createdUser);
-                }
-                else
-                {
-                    return StatusCode(500, createdUser.Errors);
-                }
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (string.IsNullOrEmpty(loginDto.UserName) || string.IsNullOrEmpty(loginDto.Password))
+            if (
+                string.IsNullOrEmpty(registerDto.UserName)
+                || string.IsNullOrEmpty(registerDto.Password)
+            )
             {
                 return BadRequest("Username and Password are required");
             }
 
-            var user = await _userManager.Users.FirstOrDefaultAsync(x =>
-                x.UserName == loginDto.UserName
-            );
+            var user = new Users { UserName = registerDto.UserName, Email = registerDto.Email };
 
-            if (user == null)
+            var createdUser = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (createdUser.Succeeded)
             {
-                return Unauthorized("Invalid User");
+                return Ok(createdUser);
             }
-            var result = await _signinManager.CheckPasswordSignInAsync(
-                user,
-                loginDto.Password,
-                false
-            );
-
-            if (!result.Succeeded)
+            else
             {
-                return Unauthorized("Invalid Credentials !");
+                return StatusCode(500, createdUser.Errors);
             }
-
-            return Ok(
-                new NewUserDto
-                {
-                    UserName = user.UserName ?? string.Empty,
-                    Email = user.Email ?? string.Empty,
-                    Token = _tokenService.CreateToken(user),
-                }
-            );
         }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (string.IsNullOrEmpty(loginDto.UserName) || string.IsNullOrEmpty(loginDto.Password))
+        {
+            return BadRequest("Username and Password are required");
+        }
+
+        var user = await _userManager.Users.FirstOrDefaultAsync(x =>
+            x.UserName == loginDto.UserName
+        );
+
+        if (user == null)
+        {
+            return Unauthorized("Invalid User");
+        }
+        var result = await _signinManager.CheckPasswordSignInAsync(
+            user,
+            loginDto.Password,
+            false
+        );
+
+        if (!result.Succeeded)
+        {
+            return Unauthorized("Invalid Credentials !");
+        }
+
+        return Ok(
+            new NewUserDto
+            {
+                UserName = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                Token = _tokenService.CreateToken(user),
+            }
+        );
     }
 }
