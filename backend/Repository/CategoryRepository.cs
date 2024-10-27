@@ -35,6 +35,12 @@ namespace backend.Repository
             return categoryModel;
         }
 
+        public async Task<List<Categories>> GetAllCategories()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            return categories;
+        }
+
         public async Task<Categories?> GetCategoryAsync(int id)
         {
             return await _context.Categories.FindAsync(id);
