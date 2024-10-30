@@ -1,4 +1,5 @@
 using backend.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,4 +21,17 @@ public class ApplicationDBContext : IdentityDbContext<Users>
     public DbSet<StockTransaction> StockTransaction { get; set; }
     public DbSet<Supplier> Supplier { get; set; }
     public DbSet<SupplierProduct> SupplierProduct { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        List<IdentityRole> roles = new List<IdentityRole>
+        {
+            new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+            new IdentityRole { Name = "User", NormalizedName = "USER" },
+        };
+
+        builder.Entity<IdentityRole>().HasData(roles);
+    }
 }
