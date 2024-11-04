@@ -105,6 +105,7 @@ builder.Services.AddScoped<IProducts, ProductsRepository>();
 builder.Services.AddScoped<IOrder, OrderRepository>();
 builder.Services.AddScoped<IOrderItem, OrderItemRepository>();
 builder.Services.AddScoped<IAdmin, AdminRepository>();
+builder.Services.AddScoped<ISupplier, SupplierRepository>();
 builder.Services.AddScoped<ICategory, CategoryRepository>();
 builder.Services.AddScoped<ICustomer, CustomerRepository>();
 builder.Services.AddScoped<IInventoryLog, InventoryLogRepository>();
