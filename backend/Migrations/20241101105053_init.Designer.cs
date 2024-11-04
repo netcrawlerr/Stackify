@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241029091349_Role")]
-    partial class Role
+    [Migration("20241101105053_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,13 +53,13 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8791064d-f0c9-40c9-b4da-0cac0e24f2ac",
+                            Id = "3668557e-3280-4aa1-ad6a-9dc78a1cff81",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "113103ca-89db-4252-9df8-95b309b28353",
+                            Id = "98590ec7-26f3-4573-92c4-1e5c7a8dda75",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -436,17 +436,23 @@ namespace backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ContactInfo")
+                    b.Property<DateOnly>("DateJoined")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("MostSoldItem")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("SupplierName")
                         .IsRequired()

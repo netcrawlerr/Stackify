@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241029090336_Roles")]
-    partial class Roles
+    [Migration("20241103035401_userAttributesVARCHAR")]
+    partial class userAttributesVARCHAR
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,15 +53,15 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "59aa21ca-b649-4ebb-a605-91688212b7eb",
+                            Id = "14d1f572-6868-494f-a43c-5eb4c86f3571",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7953ed55-0122-421a-b57a-344751e971ec",
-                            Name = "USer",
-                            NormalizedName = "User"
+                            Id = "291ccb2e-272e-40cd-b30a-67625043e6d0",
+                            Name = "User",
+                            NormalizedName = "USER"
                         });
                 });
 
@@ -436,13 +436,24 @@ namespace backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ContactInfo")
+                    b.Property<string>("DateJoined")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("MostSoldItem")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -500,6 +511,16 @@ namespace backend.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
