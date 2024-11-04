@@ -34,12 +34,22 @@ public class AccountController : ControllerBase
             if (
                 string.IsNullOrEmpty(registerDto.UserName)
                 || string.IsNullOrEmpty(registerDto.Password)
+                || string.IsNullOrEmpty(registerDto.Email)
+                || string.IsNullOrEmpty(registerDto.PhoneNumber)
+                
             )
             {
-                return BadRequest("Username and Password are required");
+                return BadRequest("All Fields are required");
             }
 
-            var user = new Users { UserName = registerDto.UserName, Email = registerDto.Email };
+            var user = new Users 
+                {
+                    FirstName = registerDto.FirstName,
+                    LastName = registerDto.LastName,
+                    UserName = registerDto.UserName, 
+                    Email = registerDto.Email,
+                    PhoneNumber = registerDto.PhoneNumber 
+                };
 
             var createdUser = await _userManager.CreateAsync(user, registerDto.Password);
 
@@ -93,6 +103,8 @@ public class AccountController : ControllerBase
         return Ok(
             new NewUserDto
             {
+                FirstName = user.FirstName ?? string.Empty,
+                LastName = user.LastName ?? string.Empty,
                 UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
                 Token = _tokenService.CreateToken(user),
