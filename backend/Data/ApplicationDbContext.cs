@@ -25,6 +25,13 @@ public class ApplicationDBContext : IdentityDbContext<Users>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+          // Configure relationships
+        builder.Entity<Products>()
+            .HasOne(p => p.Category)
+            .WithMany() // Assuming Category does not have a navigation property back to Products
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict); // Or another behavior depending on your requirements
+
 
         List<IdentityRole> roles = new List<IdentityRole>
         {
