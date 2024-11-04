@@ -1,6 +1,7 @@
 using backend.DTO;
 using backend.Interfaces;
 using backend.Mappers;
+using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -21,9 +22,37 @@ namespace backend.Controllers
         {
             var products = await _products.GetProductsAsync();
 
-            return Ok(products);
+            var productWithCategory = products.Select(p=> new ProductsDto {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                StockLevel = p.StockLevel,
+                CategoryName = p.Category.CategoryName
+            }).ToList();
+
+            return Ok(productWithCategory);
         }
 
+        [HttpGet("available")]
+        public async Task<IActionResult?> GetAvailableProducts()
+        {
+             var products = await _products.GetProductsAsync();
+
+            var availableProducts = products
+                .Where(p=>p.Status == "Available")
+                .Select(p=> new ProductsDto {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    StockLevel = p.StockLevel,
+                    CategoryName = p.Category.CategoryName,
+                    Status = p.Status
+                }).ToList();
+
+                return Ok(availableProducts);
+        } 
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetSingleProduct([FromRoute] int id)
@@ -61,6 +90,15 @@ namespace backend.Controllers
 
             var productModel = createProductsRequestDto.ToProductsFromCreateDto();
             await _products.CreateProductsAsync(productModel);
+
+            // var productModel = new Products
+            //         {
+            //             Name = createProductsRequestDto.Name,
+            //             Description = createProductsRequestDto.Description,
+            //             Price = createProductsRequestDto.Price,
+            //             StockLevel = createProductsRequestDto.StockLevel,
+            //             CategoryId = createProductsRequestDto.CategoryId, 
+            //         };
 
             return Ok(productModel);
         }

@@ -11,7 +11,7 @@ public static class ProductsMappers
         {
             Id = productsModel.Id,
             Name = productsModel.Name,
-            Description = productsModel.Description,
+           
         };
     }
 
@@ -23,6 +23,9 @@ public static class ProductsMappers
         {
             Name = createProductsRequestDto.Name,
             Description = createProductsRequestDto.Description,
+            Price = createProductsRequestDto.Price,
+            StockLevel = createProductsRequestDto.StockLevel,
+            CategoryId = createProductsRequestDto.CategoryId,
         };
     }
 }
