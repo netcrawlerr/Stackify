@@ -5,6 +5,11 @@ namespace backend.DTO
     public class RegisterDto
     {
         [Required]
+        public string FirstName { get; set; } = string.Empty;
+        
+        [Required]
+        public string LastName { get; set; } = string.Empty;
+        [Required]
         public string UserName { get; set; } = string.Empty;
 
         [Required]
@@ -13,5 +18,8 @@ namespace backend.DTO
 
         [Required]
         public string Password { get; set; } = string.Empty;
+
+        [Required]
+        public string PhoneNumber {get; set;} = string.Empty;
     }
 }
