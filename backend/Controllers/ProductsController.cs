@@ -22,14 +22,18 @@ namespace backend.Controllers
         {
             var products = await _products.GetProductsAsync();
 
-            var productWithCategory = products.Select(p=> new ProductsDto {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                StockLevel = p.StockLevel,
-                CategoryName = p.Category.CategoryName
-            }).ToList();
+            var productWithCategory = products
+                .Select(p => new ProductsDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    TotalValue = p.Price * p.StockLevel,
+                    StockLevel = p.StockLevel,
+                    CategoryName = p.Category.CategoryName,
+                })
+                .ToList();
 
             return Ok(productWithCategory);
         }
@@ -37,22 +41,25 @@ namespace backend.Controllers
         [HttpGet("available")]
         public async Task<IActionResult?> GetAvailableProducts()
         {
-             var products = await _products.GetProductsAsync();
+            var products = await _products.GetProductsAsync();
 
             var availableProducts = products
-                .Where(p=>p.Status == "Available")
-                .Select(p=> new ProductsDto {
+                .Where(p => p.Status == "Available")
+                .Select(p => new ProductsDto
+                {
                     Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
                     Price = p.Price,
                     StockLevel = p.StockLevel,
                     CategoryName = p.Category.CategoryName,
-                    Status = p.Status
-                }).ToList();
+                    Status = p.Status,
+                })
+                .ToList();
 
-                return Ok(availableProducts);
-        } 
+            return Ok(availableProducts);
+        }
+
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetSingleProduct([FromRoute] int id)
@@ -97,7 +104,7 @@ namespace backend.Controllers
             //             Description = createProductsRequestDto.Description,
             //             Price = createProductsRequestDto.Price,
             //             StockLevel = createProductsRequestDto.StockLevel,
-            //             CategoryId = createProductsRequestDto.CategoryId, 
+            //             CategoryId = createProductsRequestDto.CategoryId,
             //         };
 
             return Ok(productModel);

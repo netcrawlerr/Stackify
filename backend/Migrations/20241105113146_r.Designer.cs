@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241105113146_r")]
+    partial class r
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,13 +53,13 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "d30813d2-c304-4c37-8517-e35534375210",
+                            Id = "c2fcf92d-1b80-4896-a0bc-896e9a41252e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "3f8997a0-d809-48a0-8762-6a4b367d266b",
+                            Id = "00755238-62da-4b17-9571-3931b63f582d",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -359,6 +362,9 @@ namespace backend.Migrations
 
                     b.Property<int>("StockLevel")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TotalValue")
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");

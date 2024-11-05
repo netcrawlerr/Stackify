@@ -8,13 +8,14 @@ type Products = {
   description: string;
   price: number;
   stockLevel: number;
+  totalValue:number;
   categoryName: string;
 };
 
 type ProductState = {
   products: Products[] | null;
-  totalProductsCount: number;  
-  getTotalProducts: () => Promise<number | undefined>; 
+  totalProductsCount: number;
+  getTotalProducts: () => Promise<number | undefined>;
   getProducts: () => Promise<void>;
   createProduct: (
     name: string,
@@ -27,20 +28,20 @@ type ProductState = {
 
 export const useProductStore = create<ProductState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       products: null,
-      totalProductsCount: 0,  
+      totalProductsCount: 0,
       getTotalProducts: async () => {
         const response = await axios.get("/api/products");
         const count = response.data.length;
 
         if (count > 0) {
           console.log("Total Products = ", count);
-          set({ totalProductsCount: count });  
-          return count; 
+          set({ totalProductsCount: count });
+          return count;
         }
 
-        return undefined; 
+        return undefined;
       },
       getProducts: async () => {
         try {
@@ -62,18 +63,19 @@ export const useProductStore = create<ProductState>()(
           const response = await axios.post("/api/products", {
             name,
             description,
-            categoryId: parseInt(categoryId),
             price,
             stockLevel,
+            categoryId: parseInt(categoryId),
           });
           console.log("product creation response", response);
 
-          
           set((state) => ({
             products: state.products
               ? [...state.products, response.data]
               : [response.data],
           }));
+
+          await get().getProducts();
         } catch (error) {
           console.error("Error creating products:", error);
         }
