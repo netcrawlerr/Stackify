@@ -54,12 +54,12 @@ export default function Dashboard() {
     const fetch = async () => {
       const total = await getTotalProducts();
       if (total !== undefined) {
-        setTotalProducts(total);  
+        setTotalProducts(total);
       }
       console.log("Total Products Count:", total);
     };
     fetch();
-  }, [getTotalProducts]);  
+  }, [getTotalProducts]);
 
   console.log("Is authenticated: ", isAuthenticated);
 
@@ -75,8 +75,10 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
             <div>
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="text-lg font-medium">Total Products</div>
-                <Package className="h-4 w-4 text-muted-foreground" />
+                <div className="text-lg font-medium flex justify-center items-center ">
+                  Total Products
+                  <Package className="h-4 w-4 mx-3 text-muted-foreground" />
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold">{totalProducts}</div>
@@ -87,8 +89,10 @@ export default function Dashboard() {
             </div>
             <div>
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="text-lg font-medium">Active Orders</div>
-                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                <div className="text-lg font-medium flex justify-center items-center ">
+                  Active Orders
+                  <ShoppingCart className="h-4 w-4 mx-3 text-muted-foreground" />
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold">75</div>
@@ -99,8 +103,10 @@ export default function Dashboard() {
             </div>
             <div>
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="text-lg font-medium">Low Stock Alerts</div>
-                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                <div className="text-lg font-medium flex justify-center items-center ">
+                  Low Stock Alerts
+                  <AlertTriangle className="h-4 w-4 mx-3 text-muted-foreground" />
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold">12</div>
@@ -111,8 +117,10 @@ export default function Dashboard() {
             </div>
             <div>
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="text-lg font-medium">Total Revenue</div>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <div className="text-lg font-medium flex justify-center items-center ">
+                  Total Revenue
+                  <DollarSign className="h-4 w-4 mx-3 text-muted-foreground" />
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold">$45,231.89</div>

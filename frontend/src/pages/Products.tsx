@@ -37,7 +37,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-// import { toast } from "@/components/ui/use-toast";
+
+import { toast, useToast } from "@/hooks/use-toast";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,52 +55,6 @@ import { useCategoryStore } from "@/store/category";
 import { useProductStore } from "@/store/products";
 import { redirect } from "react-router-dom";
 
-
-const initialProducts = [
-  { id: 1, name: "Laptop", category: "Electronics", price: 999.99, stock: 50 },
-  {
-    id: 2,
-    name: "Smartphone",
-    category: "Electronics",
-    price: 599.99,
-    stock: 100,
-  },
-  { id: 3, name: "Headphones", category: "Audio", price: 149.99, stock: 200 },
-  {
-    id: 4,
-    name: "Desk Chair",
-    category: "Furniture",
-    price: 199.99,
-    stock: 30,
-  },
-  {
-    id: 5,
-    name: "Coffee Maker",
-    category: "Appliances",
-    price: 79.99,
-    stock: 75,
-  },
-];
-
-// const categories = [
-//   {
-//     categoryName: "Electronics",
-//     description: "Devices like phones, laptops, etc.",
-//   },
-//   {
-//     categoryName: "Audio",
-//     description: "Audio equipment including speakers and headphones.",
-//   },
-//   {
-//     categoryName: "Furniture",
-//     description: "Furniture items like chairs and tables.",
-//   },
-//   {
-//     categoryName: "Appliances",
-//     description: "Home appliances like microwaves and toasters.",
-//   },
-//   // Add more categories as needed
-// ];
 export default function Products() {
   const categories = useCategoryStore((state) => state.categories);
   const productsFetch = useProductStore((state) => state.getProducts);
@@ -106,9 +62,10 @@ export default function Products() {
   const totalProducts = useProductStore((state) => state.getTotalProducts);
 
   const getCategories = useCategoryStore((state) => state.getCategories);
-
+  const createProduct = useProductStore((state) => state.createProduct);
   console.log("categories ", categories);
 
+  const [categoryFilter, setCategoryFilter] = useState("All");
   const [products, setProducts] = useState(productsStore || []);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<
@@ -129,7 +86,7 @@ export default function Products() {
       await productsFetch();
       setIsLoading(false);
       const total = await totalProducts();
-      console.log("totlllllllllllllllll", total);
+      // console.log("totlllllllllllllllll", total);
     };
     fetchProducts();
   }, [productsFetch, products, totalProducts]);
@@ -137,7 +94,7 @@ export default function Products() {
   useEffect(() => {
     getCategories();
     productsFetch();
-  
+
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -153,13 +110,17 @@ export default function Products() {
     }
   };
 
-  const filteredProducts = products.filter(
-    (product) =>
-      (product.name &&
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (product.categoryName &&
-        product.categoryName.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      categoryFilter === "All" || product.categoryName === categoryFilter;
+
+    return matchesSearch && matchesCategory; // Filter by both search and category
+  });
+
+  console.log("categoryFilter", categoryFilter);
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortColumn) return 0;
@@ -176,6 +137,32 @@ export default function Products() {
   );
 
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
+
+  const handleAddProduct = async (newProduct) => {
+    // setProducts([...products, { ...newProduct }]);
+    setProducts((prevProducts) => [...prevProducts, { ...newProduct }]);
+    console.log("new", newProduct);
+    console.log("products", products);
+
+    await createProduct(
+      newProduct.name,
+      newProduct.description,
+      newProduct.price,
+      newProduct.stock,
+      newProduct.category
+    );
+
+    // await productsFetch();
+
+    console.log("handleAdd");
+
+    toast({
+      title: "Product added",
+      description: "Has been Added in the inventory",
+    });
+
+    setIsAddEditDialogOpen(false);
+  };
 
   const handleEditProduct = (updatedProduct: (typeof products)[0]) => {
     setProducts(
@@ -197,9 +184,10 @@ export default function Products() {
     //   variant: "destructive",
     // });
   };
+  
 
   const totalValue = products.reduce(
-    (sum, product) => sum + product.price * product.stockLevel,
+    (sum, product) => sum + product.totalValue,
     0
   );
   const lowStockItems = products.filter(
@@ -260,15 +248,23 @@ export default function Products() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline">
                     <Filter className="mr-2 h-4 w-4" />
-                    Filters
+                    Category {`: ${categoryFilter}`}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
-                  <DropdownMenuItem>Electronics</DropdownMenuItem>
-                  <DropdownMenuItem>Audio</DropdownMenuItem>
-                  <DropdownMenuItem>Furniture</DropdownMenuItem>
-                  <DropdownMenuItem>Appliances</DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={() => setCategoryFilter("All")}>
+                    All
+                  </DropdownMenuItem>
+
+                  {categories.map((c) => (
+                    <DropdownMenuItem
+                      onClick={() => setCategoryFilter(c.categoryName)}
+                    >
+                      {c.categoryName}
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -295,6 +291,7 @@ export default function Products() {
                 <ProductForm
                   initialData={editingProduct}
                   onSubmit={handleEditProduct}
+                  onAddProduct={handleAddProduct}
                 />
               </DialogContent>
             </Dialog>
@@ -473,6 +470,7 @@ export default function Products() {
 function ProductForm({
   initialData,
   onSubmit,
+  onAddProduct,
 }: {
   initialData?: {
     name: string;
@@ -481,6 +479,15 @@ function ProductForm({
     stock: number;
     category: string;
   } | null;
+
+  onAddProduct: (data: {
+    name: string;
+    description: string;
+    price: number;
+    stock: number;
+    category: string;
+  }) => void;
+
   onSubmit: (data: {
     name: string;
     description: string;
@@ -499,6 +506,7 @@ function ProductForm({
     }
   );
 
+  const { toast } = useToast();
   const categories = useCategoryStore((state) => state.categories);
 
   const createProduct = useProductStore((state) => state.createProduct);
@@ -516,17 +524,14 @@ function ProductForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    if (initialData) {
+      onSubmit(formData);
+    } else {
+      onAddProduct(formData);
+    }
     console.log(formData);
 
-    await createProduct(
-      formData.name,
-      formData.description,
-      formData.price,
-      formData.stock,
-      formData.category
-    );
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (

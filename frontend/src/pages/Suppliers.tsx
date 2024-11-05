@@ -56,8 +56,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-
+import { useCategoryStore } from "@/store/category";
 
 const initialSuppliers = [
   {
@@ -150,8 +149,6 @@ export default function SuppliersPage() {
   const suppliersPerPage = 10;
 
   useEffect(() => {
-   
-
     const fetchSuppliers = async () => {
       const response = await axios.get("/api/supplier");
       const data = await response.data;
@@ -285,6 +282,8 @@ export default function SuppliersPage() {
     0
   );
 
+  const categories = useCategoryStore((state) => state.categories);
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Suppliers</h1>
@@ -363,31 +362,14 @@ export default function SuppliersPage() {
                       >
                         All
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setCategoryFilter("Electronics")}
-                      >
-                        Electronics
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setCategoryFilter("Food & Beverage")}
-                      >
-                        Food & Beverage
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setCategoryFilter("Furniture")}
-                      >
-                        Furniture
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setCategoryFilter("Shipping")}
-                      >
-                        Shipping
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setCategoryFilter("Auto Parts")}
-                      >
-                        Auto Parts
-                      </DropdownMenuItem>
+
+                      {categories.map((c) => (
+                        <DropdownMenuItem
+                          onClick={() => setCategoryFilter(c.categoryName)}
+                        >
+                          {c.categoryName}
+                        </DropdownMenuItem>
+                      ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <DropdownMenu>
@@ -461,7 +443,7 @@ export default function SuppliersPage() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="w-[100px]">ID</TableHead>
+                          {/* <TableHead className="w-[100px]">ID</TableHead> */}
                           <TableHead
                             className="cursor-pointer"
                             onClick={() => handleSort("name")}
@@ -489,9 +471,6 @@ export default function SuppliersPage() {
                       <TableBody>
                         {currentSuppliers.map((supplier) => (
                           <TableRow key={supplier.id}>
-                            <TableCell className="font-medium">
-                              {supplier.id}
-                            </TableCell>
                             <TableCell>{supplier.supplierName}</TableCell>
                             <TableCell>{supplier.category}</TableCell>
                             <TableCell>
