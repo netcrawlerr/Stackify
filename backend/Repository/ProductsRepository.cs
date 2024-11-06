@@ -48,7 +48,7 @@ public class ProductsRepository : IProducts
 
     public async Task<List<Products>> GetProductsAsync()
     {
-        return await _context.Products.Include(p=>p.Category).ToListAsync();
+        return await _context.Products.Include(p => p.Category).ToListAsync();
     }
 
     public async Task<Products?> GetSingleProductsAsync(int id)
@@ -75,6 +75,9 @@ public class ProductsRepository : IProducts
 
         existingProduct.Name = updateProductsRequestDto.Name;
         existingProduct.Description = updateProductsRequestDto.Description;
+        existingProduct.Price = updateProductsRequestDto.Price;
+        existingProduct.StockLevel = updateProductsRequestDto.StockLevel;
+        existingProduct.CategoryId = updateProductsRequestDto.CategoryId;
 
         await _context.SaveChangesAsync();
 

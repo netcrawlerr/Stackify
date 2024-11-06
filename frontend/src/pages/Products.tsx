@@ -59,11 +59,12 @@ export default function Products() {
   const categories = useCategoryStore((state) => state.categories);
   const productsFetch = useProductStore((state) => state.getProducts);
   const productsStore = useProductStore((state) => state.products);
+  const deleteProduct = useProductStore((state) => state.deleteProduct);
   const totalProducts = useProductStore((state) => state.getTotalProducts);
 
   const getCategories = useCategoryStore((state) => state.getCategories);
   const createProduct = useProductStore((state) => state.createProduct);
-  console.log("categories ", categories);
+  // console.log("categories ", categories);
 
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [products, setProducts] = useState(productsStore || []);
@@ -120,7 +121,7 @@ export default function Products() {
     return matchesSearch && matchesCategory; // Filter by both search and category
   });
 
-  console.log("categoryFilter", categoryFilter);
+  // console.log("categoryFilter", categoryFilter);
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortColumn) return 0;
@@ -141,8 +142,8 @@ export default function Products() {
   const handleAddProduct = async (newProduct) => {
     // setProducts([...products, { ...newProduct }]);
     setProducts((prevProducts) => [...prevProducts, { ...newProduct }]);
-    console.log("new", newProduct);
-    console.log("products", products);
+    // console.log("new", newProduct);
+    // console.log("products", products);
 
     await createProduct(
       newProduct.name,
@@ -154,7 +155,7 @@ export default function Products() {
 
     // await productsFetch();
 
-    console.log("handleAdd");
+    // console.log("handleAdd");
 
     toast({
       title: "Product added",
@@ -164,10 +165,11 @@ export default function Products() {
     setIsAddEditDialogOpen(false);
   };
 
-  const handleEditProduct = (updatedProduct: (typeof products)[0]) => {
-    setProducts(
-      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
-    );
+  const handleEditProduct = (updatedProduct) => {
+    // setProducts(
+    //   products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+    // );
+
     // toast({
     //   title: "Product Updated",
     //   description: `${updatedProduct.name} has been updated in the inventory.`,
@@ -176,15 +178,18 @@ export default function Products() {
     setEditingProduct(null);
   };
 
-  const handleDeleteProduct = (id: number) => {
+  const handleDeleteProduct = async (id: number) => {
     setProducts(products.filter((p) => p.id !== id));
-    // toast({
-    //   title: "Product Deleted",
-    //   description: "The product has been removed from the inventory.",
-    //   variant: "destructive",
-    // });
+    // console.log("The Id of product to be deleted ", id);
+
+    await deleteProduct(id);
+
+    toast({
+      title: "Product Deleted",
+      description: "The product has been removed from the inventory.",
+      variant: "destructive",
+    });
   };
-  
 
   const totalValue = products.reduce(
     (sum, product) => sum + product.totalValue,
@@ -290,7 +295,7 @@ export default function Products() {
                 </DialogHeader>
                 <ProductForm
                   initialData={editingProduct}
-                  onSubmit={handleEditProduct}
+                  onEdit={handleEditProduct}
                   onAddProduct={handleAddProduct}
                 />
               </DialogContent>
@@ -469,7 +474,7 @@ export default function Products() {
 
 function ProductForm({
   initialData,
-  onSubmit,
+  onEdit,
   onAddProduct,
 }: {
   initialData?: {
@@ -488,7 +493,7 @@ function ProductForm({
     category: string;
   }) => void;
 
-  onSubmit: (data: {
+  onEdit: (data: {
     name: string;
     description: string;
     price: number;
@@ -520,16 +525,17 @@ function ProductForm({
       ...prev,
       [name]: name === "price" || name === "stock" ? parseFloat(value) : value,
     }));
+    // console.log("category is ", document.getElementsByName("category"));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (initialData) {
-      onSubmit(formData);
-    } else {
+      onEdit(formData);
+    } else if (onAddProduct) {
       onAddProduct(formData);
     }
-    console.log(formData);
+    console.log("formData", formData);
 
     // window.location.reload();
   };

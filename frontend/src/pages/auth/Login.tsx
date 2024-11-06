@@ -39,6 +39,7 @@ export default function Login() {
           <label htmlFor="" className="text-4xl">
             💼
           </label>
+          
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
             Welcome to Stackify
           </h2>
