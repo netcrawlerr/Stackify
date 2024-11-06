@@ -54,6 +54,7 @@ import {
 import { useCategoryStore } from "@/store/category";
 import { useProductStore } from "@/store/products";
 import { redirect } from "react-router-dom";
+import { useStockStore } from "@/store/stocks";
 
 export default function Products() {
   const categories = useCategoryStore((state) => state.categories);
@@ -64,6 +65,7 @@ export default function Products() {
 
   const getCategories = useCategoryStore((state) => state.getCategories);
   const createProduct = useProductStore((state) => state.createProduct);
+  const lowStockItems = useProductStore((state) => state.lowStockItems());
   // console.log("categories ", categories);
 
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -195,9 +197,6 @@ export default function Products() {
     (sum, product) => sum + product.totalValue,
     0
   );
-  const lowStockItems = products.filter(
-    (product) => product.stockLevel < 10
-  ).length;
 
   return (
     <div className="container mx-auto py-10">
@@ -263,13 +262,14 @@ export default function Products() {
                     All
                   </DropdownMenuItem>
 
-                  {categories.map((c) => (
-                    <DropdownMenuItem
-                      onClick={() => setCategoryFilter(c.categoryName)}
-                    >
-                      {c.categoryName}
-                    </DropdownMenuItem>
-                  ))}
+                  {categories &&
+                    categories.map((c) => (
+                      <DropdownMenuItem
+                        onClick={() => setCategoryFilter(c.categoryName)}
+                      >
+                        {c.categoryName}
+                      </DropdownMenuItem>
+                    ))}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

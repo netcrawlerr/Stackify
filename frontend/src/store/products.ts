@@ -16,6 +16,7 @@ type Products = {
 type ProductState = {
   products: Products[] | null;
   totalProductsCount: number;
+  lowStockItems: () => Promise<void>;
   getTotalProducts: () => Promise<number | undefined>;
   getProducts: () => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
@@ -40,6 +41,10 @@ export const useProductStore = create<ProductState>()(
   persist(
     (set, get) => ({
       products: null,
+      lowStockItems: () =>
+        (get().products || []).filter((product) => product.stockLevel < 10)
+          .length,
+
       totalProductsCount: 0,
       getTotalProducts: async () => {
         const response = await axios.get("/api/products");

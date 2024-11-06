@@ -1,10 +1,21 @@
-// import { div, div, div } from "@/components/ui/chart"
-// import { div, div, div, div, div } from "@/components/ui/div"
-// import { div } from "@/components/ui/div"
-import { Package, ShoppingCart, AlertTriangle, DollarSign } from "lucide-react";
+import {
+  Package,
+  ShoppingCart,
+  AlertTriangle,
+  DollarSign,
+  Table,
+} from "lucide-react";
 import { useAuthStore } from "../store/auth";
 import { useProductStore } from "@/store/products";
 import { useEffect, useState } from "react";
+import { PieChart, Cell, ResponsiveContainer, Pie, Tooltip } from "recharts";
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const recentActivity = [
   {
@@ -39,20 +50,45 @@ const recentActivity = [
   },
 ];
 
-const lowStockItems = [
-  { id: 1, name: "Product A", currentStock: 5, threshold: 10 },
-  { id: 2, name: "Product B", currentStock: 3, threshold: 15 },
-  { id: 3, name: "Product C", currentStock: 8, threshold: 20 },
-];
+const colors = ["#8890d8", "#82ca9d", "#ff8042", "#ff6384", "#00049F"];
+// const lowStockItems = [
+//   { id: 1, name: "Product A", currentStock: 5, threshold: 10 },
+//   { id: 2, name: "Product B", currentStock: 3, threshold: 15 },
+//   { id: 3, name: "Product C", currentStock: 8, threshold: 20 },
+// ];
 
 export default function Dashboard() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [totalProducts, setTotalProducts] = useState(0);
   const getTotalProducts = useProductStore((state) => state.getTotalProducts);
+  const productsStore = useProductStore((state) => state.products);
+  const products = useProductStore((state) => state.products);
+  const [lowStockItems, setLowStockItems] = useState(productsStore || []);
+
+  const lowStockItemsCount = useProductStore((state) => state.lowStockItems());
+  console.log("products in dashboard", products);
+
+  const lowItems = products?.filter((p) => p.stockLevel < 10);
+
+  console.log("low items", lowItems);
+
+  const chartData = products
+    .filter((product) => product.stockLevel < 10)
+    .map((product) => ({
+      name: product.name,
+      stockLevel: product.stockLevel,
+    }));
+
+  console.log("chart data", chartData);
+
+  useEffect(() => {
+    setLowStockItems(products?.filter((p) => p.stockLevel < 10));
+  }, [products]);
 
   useEffect(() => {
     const fetch = async () => {
       const total = await getTotalProducts();
+
       if (total !== undefined) {
         setTotalProducts(total);
       }
@@ -109,9 +145,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <div>
-                <div className="text-2xl font-bold">12</div>
+                <div className="text-2xl font-bold">{lowStockItemsCount}</div>
                 <p className="text-xs text-muted-foreground">
-                  3 critical, 9 warning
+                  {lowStockItemsCount} warnings
                 </p>
               </div>
             </div>
@@ -132,60 +168,66 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* <div> */}
-            {/* <div>
-                <div>Order Status</div>
-                <div>Distribution of current order statuses</div>
-              </div> */}
-            {/* <div> */}
-            {/* <div className="h-[300px]">
+            <div>
+              <div>
+                <div className="font-extrabold text-xl">Stock Status</div>
+                <div>Distribution of current Stock statuses</div>
+              </div>
+              <div>
+                <div className="h-[300px] border">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={orderStatusData}
+                        data={chartData}
                         cx="50%"
                         cy="50%"
-                        labelLine={false}
-                        outerRadius={80}
+                        innerRadius={60}
+                        outerRadius={100}
                         fill="#8884d8"
-                        dataKey="value"
+                        dataKey="stockLevel"
                       >
-                        {orderStatusData.map((entry, index) => (
+                        {chartData.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
+                            fill={colors[index % colors.length]}
                           />
                         ))}
                       </Pie>
-                      
+                      {/* Add the Tooltip component here */}
+                      <Tooltip
+                        formatter={(value, name, entry) => [
+                          `Stock Level: ${value}`,
+                          `Product: ${entry.name}`,
+                        ]}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
-                </div> */}
-            {/* </div> */}
-            {/* </div> */}
+                </div>
+              </div>
+            </div>
 
             <div>
               <div>
                 <div className="font-bold text-lg">Low Stock Items</div>
                 <div>Products requiring immediate attention</div>
               </div>
-              <div>
-                <ul className="space-y-4">
-                  {lowStockItems.map((item) => (
-                    <li
-                      key={item.id}
-                      className="flex justify-between items-center"
-                    >
-                      <span className="font-medium">{item.name}</span>
-                      <div>
-                        <span className="text-lg text-gray-500  mr-2">
-                          {item.currentStock} / {item.threshold}
-                        </span>
-                        <div>Low Stock</div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+              <div className="overflow-x-auto shadow-md rounded-lg">
+                {lowStockItems.map((item) => (
+                  <TableRow
+                    key={item.id}
+                    className="border-b border-gray-200 hover:bg-gray-100"
+                  >
+                    <TableCell className="py-3 px-6 text-left font-medium">
+                      {item.name}
+                    </TableCell>
+                    <TableCell className="py-3 px-6 text-left text-sm text-red-500">
+                      Low Stock
+                    </TableCell>
+                    <TableCell className="py-3 px-6 text-left text-lg text-gray-500">
+                      {item.stockLevel}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </div>
             </div>
           </div>
