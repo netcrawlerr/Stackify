@@ -1,2 +1,2 @@
-*.cs languist-detactable=true
-*.ts languist-detactable=false
+*.cs languist-detectable=true
+*.ts languist-detectable=false
