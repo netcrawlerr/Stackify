@@ -261,50 +261,6 @@ export default function Dashboard() {
               </ul>
             </div>
           </div>
-
-          {/* my customE Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <div>
-                <div className="font-bold text-lg">Customer Metrics</div>
-                <div>Overview of customer-related data</div>
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span>Total Customers</span>
-                  <span className="font-bold">1,234</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>New Customers (This Month)</span>
-                  <span className="font-bold">45</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Repeat Purchase Rate</span>
-                  <span className="font-bold">68%</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div>
-                <div className="font-bold text-lg">Supplier Metrics</div>
-                <div>Overview of supplier-related data</div>
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span>Active Suppliers</span>
-                  <span className="font-bold">87</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Pending Orders</span>
-                  <span className="font-bold">12</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Average Lead Time</span>
-                  <span className="font-bold">5 days</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </main>
       </div>
     </div>

@@ -57,6 +57,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCategoryStore } from "@/store/category";
+import { useSupplierStore } from "@/store/supplier";
+import { toast } from "@/hooks/use-toast";
 
 const initialSuppliers = [
   {
@@ -116,17 +118,9 @@ const initialSuppliers = [
   },
 ];
 
-const initialTransactions = [
-  { id: 1, supplierId: 1, date: "2024-03-01", amount: 5000, status: "Paid" },
-  { id: 2, supplierId: 2, date: "2024-03-02", amount: 3500, status: "Pending" },
-  { id: 3, supplierId: 3, date: "2024-03-03", amount: 7500, status: "Paid" },
-  { id: 4, supplierId: 4, date: "2024-03-04", amount: 2000, status: "Overdue" },
-  { id: 5, supplierId: 5, date: "2024-03-05", amount: 4500, status: "Paid" },
-];
-
 export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState([]);
-  const [transactions, setTransactions] = useState(initialTransactions);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -139,13 +133,10 @@ export default function SuppliersPage() {
   const [editingSupplier, setEditingSupplier] = useState<
     (typeof suppliers)[0] | null
   >(null);
-  const [editingTransaction, setEditingTransaction] = useState<
-    (typeof transactions)[0] | null
-  >(null);
+
   const [isAddEditSupplierDialogOpen, setIsAddEditSupplierDialogOpen] =
     useState(false);
-  const [isAddEditTransactionDialogOpen, setIsAddEditTransactionDialogOpen] =
-    useState(false);
+
   const suppliersPerPage = 10;
 
   useEffect(() => {
@@ -198,16 +189,17 @@ export default function SuppliersPage() {
 
   const totalPages = Math.ceil(sortedSuppliers.length / suppliersPerPage);
 
-  const handleAddSupplier = (
-    newSupplier: Omit<(typeof suppliers)[0], "id">
-  ) => {
-    const id = Math.max(...suppliers.map((s) => s.id)) + 1;
-    setSuppliers([...suppliers, { ...newSupplier, id }]);
+  const supplierInStore = useSupplierStore((state) => state.suppliers);
+
+  const addSupplier = useSupplierStore((state) => state.addSupplier);
+
+  const handleAddSupplier = async (data: Omit<Suppliers, "id">) => {
+    await addSupplier(data);
+
     toast({
       title: "Supplier Added",
-      description: `${newSupplier.name} has been added to the supplier list.`,
+      description: `${data.supplierName} has been added to the supplier list.`,
     });
-    setIsAddEditSupplierDialogOpen(false);
   };
 
   const handleEditSupplier = (updatedSupplier: (typeof suppliers)[0]) => {
@@ -224,48 +216,11 @@ export default function SuppliersPage() {
 
   const handleDeleteSupplier = (id: number) => {
     setSuppliers(suppliers.filter((s) => s.id !== id));
-    setTransactions(transactions.filter((t) => t.supplierId !== id));
+
     toast({
       title: "Supplier Deleted",
       description:
-        "The supplier and associated transactions have been removed from the system.",
-      variant: "destructive",
-    });
-  };
-
-  const handleAddTransaction = (
-    newTransaction: Omit<(typeof transactions)[0], "id">
-  ) => {
-    const id = Math.max(...transactions.map((t) => t.id)) + 1;
-    setTransactions([...transactions, { ...newTransaction, id }]);
-    toast({
-      title: "Transaction Added",
-      description: `A new transaction has been added for supplier ID ${newTransaction.supplierId}.`,
-    });
-    setIsAddEditTransactionDialogOpen(false);
-  };
-
-  const handleEditTransaction = (
-    updatedTransaction: (typeof transactions)[0]
-  ) => {
-    setTransactions(
-      transactions.map((t) =>
-        t.id === updatedTransaction.id ? updatedTransaction : t
-      )
-    );
-    toast({
-      title: "Transaction Updated",
-      description: `Transaction ID ${updatedTransaction.id} has been updated.`,
-    });
-    setIsAddEditTransactionDialogOpen(false);
-    setEditingTransaction(null);
-  };
-
-  const handleDeleteTransaction = (id: number) => {
-    setTransactions(transactions.filter((t) => t.id !== id));
-    toast({
-      title: "Transaction Deleted",
-      description: "The transaction has been removed from the system.",
+        "The supplier and associated TXs have been removed from the system.",
       variant: "destructive",
     });
   };
@@ -273,14 +228,10 @@ export default function SuppliersPage() {
   const averageRating =
     suppliers.reduce((sum, supplier) => sum + supplier.rating, 0) /
     suppliers.length;
+
   const topRatedSuppliers = suppliers.filter(
     (supplier) => supplier.rating >= 4.5
   ).length;
-  const totalTransactions = transactions.length;
-  const totalSpent = transactions.reduce(
-    (sum, transaction) => sum + transaction.amount,
-    0
-  );
 
   const categories = useCategoryStore((state) => state.categories);
 
@@ -324,7 +275,7 @@ export default function SuppliersPage() {
             <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalSpent.toFixed(2)}</div>
+            <div className="text-2xl font-bold">-</div>
           </CardContent>
         </Card>
       </div>
@@ -332,7 +283,6 @@ export default function SuppliersPage() {
       <Tabs defaultValue="suppliers" className="space-y-4">
         <TabsList>
           <TabsTrigger value="suppliers">Suppliers</TabsTrigger>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
         </TabsList>
         <TabsContent value="suppliers" className="space-y-4">
           <Card>
@@ -446,7 +396,7 @@ export default function SuppliersPage() {
                           {/* <TableHead className="w-[100px]">ID</TableHead> */}
                           <TableHead
                             className="cursor-pointer"
-                            onClick={() => handleSort("name")}
+                            onClick={() => handleSort("supplierName")}
                           >
                             Name{" "}
                             {sortColumn === "name" &&
@@ -469,115 +419,119 @@ export default function SuppliersPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {currentSuppliers.map((supplier) => (
-                          <TableRow key={supplier.id}>
-                            <TableCell>{supplier.supplierName}</TableCell>
-                            <TableCell>{supplier.category}</TableCell>
-                            <TableCell>
-                              <span className="flex items-center">
-                                {supplier.rating.toFixed(1)}
-                                <Star className="ml-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex flex-col">
+                        {currentSuppliers &&
+                          currentSuppliers.map((supplier) => (
+                            <TableRow key={supplier.id}>
+                              <TableCell>{supplier.supplierName}</TableCell>
+                              <TableCell>{supplier.category}</TableCell>
+                              <TableCell>
                                 <span className="flex items-center">
-                                  <Mail className="mr-1 h-4 w-4" />{" "}
-                                  {supplier.email}
+                                  {supplier.rating.toFixed(1)}
+                                  <Star className="ml-1 h-4 w-4 fill-yellow-400 text-yellow-400" />
                                 </span>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-col">
+                                  <span className="flex items-center">
+                                    <Mail className="mr-1 h-4 w-4" />{" "}
+                                    {supplier.email}
+                                  </span>
+                                  <span className="flex items-center">
+                                    {/* <Phone className="mr-1 h-4 w-4" />{" "} */}
+                                    {supplier.phone}
+                                  </span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
                                 <span className="flex items-center">
-                                  {/* <Phone className="mr-1 h-4 w-4" />{" "} */}
-                                  {supplier.phone}
+                                  <Calendar className="mr-1 h-4 w-4" />{" "}
+                                  {supplier.dateJoined}
                                 </span>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <span className="flex items-center">
-                                <Calendar className="mr-1 h-4 w-4" />{" "}
-                                {supplier.dateJoined}
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <span className="flex items-center">
-                                <Package className="mr-1 h-4 w-4" />{" "}
-                                {supplier.mostSoldItem}
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <span
-                                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  supplier.status === "Active"
-                                    ? "bg-green-100 text-green-800"
-                                    : supplier.status === "Inactive"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-yellow-100 text-yellow-800"
-                                }`}
-                              >
-                                {supplier.status}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    className="h-8 w-8 p-0"
-                                  >
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      setEditingSupplier(supplier);
-                                      setIsAddEditSupplierDialogOpen(true);
-                                    }}
-                                  >
-                                    <Edit className="mr-2 h-4 w-4" /> Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                      <DropdownMenuItem
-                                        onSelect={(e) => e.preventDefault()}
-                                      >
-                                        <Trash className="mr-2 h-4 w-4" />{" "}
-                                        Delete
-                                      </DropdownMenuItem>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                      <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                          Are you absolutely sure?
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                          This action cannot be undone. This
-                                          will permanently delete the supplier
-                                          and all associated transactions from
-                                          the system.
-                                        </AlertDialogDescription>
-                                      </AlertDialogHeader>
-                                      <AlertDialogFooter>
-                                        <AlertDialogCancel>
-                                          Cancel
-                                        </AlertDialogCancel>
-                                        <AlertDialogAction
-                                          onClick={() =>
-                                            handleDeleteSupplier(supplier.id)
-                                          }
+                              </TableCell>
+                              <TableCell>
+                                <span className="flex items-center">
+                                  <Package className="mr-1 h-4 w-4" />{" "}
+                                  {supplier.mostSoldItem}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                <span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    supplier.status.toLowerCase() === "active"
+                                      ? "bg-green-100 text-green-800"
+                                      : supplier.status.toLowerCase() ===
+                                        "inactive"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                                  }`}
+                                >
+                                  {supplier.status}
+                                </span>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      className="h-8 w-8 p-0"
+                                    >
+                                      <span className="sr-only">Open menu</span>
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>
+                                      Actions
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        setEditingSupplier(supplier);
+                                        setIsAddEditSupplierDialogOpen(true);
+                                      }}
+                                    >
+                                      <Edit className="mr-2 h-4 w-4" /> Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem
+                                          onSelect={(e) => e.preventDefault()}
                                         >
+                                          <Trash className="mr-2 h-4 w-4" />{" "}
                                           Delete
-                                        </AlertDialogAction>
-                                      </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                  </AlertDialog>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                                        </DropdownMenuItem>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            Are you absolutely sure?
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            This action cannot be undone. This
+                                            will permanently delete the supplier
+                                            and all associated transactions from
+                                            the system.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>
+                                            Cancel
+                                          </AlertDialogCancel>
+                                          <AlertDialogAction
+                                            onClick={() =>
+                                              handleDeleteSupplier(supplier.id)
+                                            }
+                                          >
+                                            Delete
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
+                          ))}
                       </TableBody>
                     </Table>
                   </div>
@@ -618,144 +572,6 @@ export default function SuppliersPage() {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="transactions" className="space-y-4">
-          <Card>
-            <CardContent>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">Transaction History</h2>
-                <Dialog
-                  open={isAddEditTransactionDialogOpen}
-                  onOpenChange={setIsAddEditTransactionDialogOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button onClick={() => setEditingTransaction(null)}>
-                      <Plus className="mr-2 h-4 w-4" /> Add Transaction
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>
-                        {editingTransaction
-                          ? "Edit Transaction"
-                          : "Add New Transaction"}
-                      </DialogTitle>
-                      <DialogDescription>
-                        {editingTransaction
-                          ? "Make changes to the transaction here."
-                          : "Add the details of the new transaction here."}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <TransactionForm
-                      initialData={editingTransaction}
-                      onSubmit={
-                        editingTransaction
-                          ? handleEditTransaction
-                          : handleAddTransaction
-                      }
-                      suppliers={suppliers}
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Supplier</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transactions.map((transaction) => (
-                      <TableRow key={transaction.id}>
-                        <TableCell>{transaction.id}</TableCell>
-                        <TableCell>
-                          {suppliers.find(
-                            (s) => s.id === transaction.supplierId
-                          )?.name || "Unknown"}
-                        </TableCell>
-                        <TableCell>{transaction.date}</TableCell>
-                        <TableCell>${transaction.amount.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              transaction.status === "Paid"
-                                ? "bg-green-100 text-green-800"
-                                : transaction.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            {transaction.status}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setEditingTransaction(transaction);
-                                  setIsAddEditTransactionDialogOpen(true);
-                                }}
-                              >
-                                <Edit className="mr-2 h-4 w-4" /> Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
-                                  >
-                                    <Trash className="mr-2 h-4 w-4" /> Delete
-                                  </DropdownMenuItem>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>
-                                      Are you absolutely sure?
-                                    </AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      This action cannot be undone. This will
-                                      permanently delete the transaction from
-                                      the system.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>
-                                      Cancel
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() =>
-                                        handleDeleteTransaction(transaction.id)
-                                      }
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );
@@ -766,7 +582,7 @@ function SupplierForm({
   onSubmit,
 }: {
   initialData?: {
-    name: string;
+    supplierName: string;
     category: string;
     rating: number;
     email: string;
@@ -776,7 +592,7 @@ function SupplierForm({
     status: string;
   } | null;
   onSubmit: (data: {
-    name: string;
+    supplierName: string;
     category: string;
     rating: number;
     email: string;
@@ -788,7 +604,7 @@ function SupplierForm({
 }) {
   const [formData, setFormData] = useState(
     initialData || {
-      name: "",
+      supplierName: "",
       category: "",
       rating: 0,
       email: "",
@@ -822,9 +638,9 @@ function SupplierForm({
             Name
           </Label>
           <Input
-            id="name"
-            name="name"
-            value={formData.name}
+            id="supplierName"
+            name="supplierName"
+            value={formData.supplierName}
             onChange={handleChange}
             className="col-span-3"
             required
@@ -935,133 +751,6 @@ function SupplierForm({
       <DialogFooter>
         <Button type="submit">
           {initialData ? "Save changes" : "Add supplier"}
-        </Button>
-      </DialogFooter>
-    </form>
-  );
-}
-
-function TransactionForm({
-  initialData,
-  onSubmit,
-  suppliers,
-}: {
-  initialData?: {
-    supplierId: number;
-    date: string;
-    amount: number;
-    status: string;
-  } | null;
-  onSubmit: (data: {
-    supplierId: number;
-    date: string;
-    amount: number;
-    status: string;
-  }) => void;
-  suppliers: { id: number; name: string }[];
-}) {
-  const [formData, setFormData] = useState(
-    initialData || {
-      supplierId: suppliers[0]?.id || 0,
-      date: new Date().toISOString().split("T")[0],
-      amount: 0,
-      status: "Pending",
-    }
-  );
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        name === "amount"
-          ? parseFloat(value)
-          : name === "supplierId"
-          ? parseInt(value)
-          : value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="supplierId" className="text-right">
-            Supplier
-          </Label>
-          <select
-            id="supplierId"
-            name="supplierId"
-            value={formData.supplierId}
-            onChange={handleChange}
-            className="col-span-3 border rounded-md p-2"
-            required
-          >
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>
-                {supplier.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="date" className="text-right">
-            Date
-          </Label>
-          <Input
-            id="date"
-            name="date"
-            type="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="col-span-3"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="amount" className="text-right">
-            Amount
-          </Label>
-          <Input
-            id="amount"
-            name="amount"
-            type="number"
-            value={formData.amount}
-            onChange={handleChange}
-            className="col-span-3"
-            required
-            min="0"
-            step="0.01"
-          />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="status" className="text-right">
-            Status
-          </Label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="col-span-3 border rounded-md p-2"
-            required
-          >
-            <option value="Pending">Pending</option>
-            <option value="Paid">Paid</option>
-            <option value="Overdue">Overdue</option>
-          </select>
-        </div>
-      </div>
-      <DialogFooter>
-        <Button type="submit">
-          {initialData ? "Save changes" : "Add transaction"}
         </Button>
       </DialogFooter>
     </form>
