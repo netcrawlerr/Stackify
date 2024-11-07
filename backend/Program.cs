@@ -1,3 +1,5 @@
+using backend.Backup;
+using backend.Config;
 using backend.Data;
 using backend.Interfaces;
 using backend.Models;
@@ -50,6 +52,10 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.Configure<MysqlSettings>(builder.Configuration.GetSection("MySqlSettings"));
+
+builder.Services.AddTransient<BackupDatabase>();
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
