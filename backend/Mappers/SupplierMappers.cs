@@ -13,8 +13,12 @@ public static class SupplierMappers
         {
             SupplierName = createSupplierRequestDto.SupplierName,
             Category = createSupplierRequestDto.Category,
+            Rating = createSupplierRequestDto.Rating,
             Email = createSupplierRequestDto.Email,
+            Phone = createSupplierRequestDto.Phone,
             DateJoined = createSupplierRequestDto.DateJoined,
+            MostSoldItem = createSupplierRequestDto.MostSoldItem,
+            Status = createSupplierRequestDto.Status,
         };
     }
 }
