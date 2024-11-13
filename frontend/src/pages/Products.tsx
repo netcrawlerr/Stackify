@@ -55,6 +55,7 @@ import { useCategoryStore } from "@/store/category";
 import { useProductStore } from "@/store/products";
 import { redirect } from "react-router-dom";
 import { useStockStore } from "@/store/stocks";
+import axios from "axios";
 
 export default function Products() {
   const categories = useCategoryStore((state) => state.categories);
@@ -85,14 +86,15 @@ export default function Products() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setIsLoading(true);
-      await productsFetch();
-      setIsLoading(false);
-      const total = await totalProducts();
-      // console.log("totlllllllllllllllll", total);
+      try {
+        const response = await axios.get("/api/products");
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
     };
     fetchProducts();
-  }, [productsFetch, products, totalProducts]);
+  }, [productsStore, totalProducts]);
 
   useEffect(() => {
     getCategories();
