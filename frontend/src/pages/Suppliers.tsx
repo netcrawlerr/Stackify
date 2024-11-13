@@ -119,7 +119,10 @@ const initialSuppliers = [
 ];
 
 export default function SuppliersPage() {
-  const [suppliers, setSuppliers] = useState([]);
+  const suppliersInStore = useSupplierStore((state) => state.suppliers);
+  const updateSupplier = useSupplierStore((state) => state.updateSupplier);
+  const deleteSupplier = useSupplierStore((state) => state.deleteSupplier);
+  const [suppliers, setSuppliers] = useState(suppliersInStore || []);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
@@ -152,7 +155,7 @@ export default function SuppliersPage() {
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-  }, []);
+  }, [suppliersInStore]);
 
   const handleSort = (column: keyof (typeof suppliers)[0]) => {
     if (sortColumn === column) {
@@ -202,27 +205,40 @@ export default function SuppliersPage() {
     });
   };
 
-  const handleEditSupplier = (updatedSupplier: (typeof suppliers)[0]) => {
-    setSuppliers(
-      suppliers.map((s) => (s.id === updatedSupplier.id ? updatedSupplier : s))
-    );
-    toast({
-      title: "Supplier Updated",
-      description: `${updatedSupplier.name} has been updated in the supplier list.`,
-    });
+  const handleEditSupplier = async (updatedSupplier: (typeof suppliers)[0]) => {
+    try {
+      await updateSupplier(updatedSupplier);
+      setSuppliers(
+        suppliers.map((s) =>
+          s.id === updatedSupplier.id ? updatedSupplier : s
+        )
+      );
+      console.log("suppliers", updatedSupplier.id);
+      toast({
+        title: "Supplier Updated",
+        description: `${updatedSupplier.supplierName} has been updated in the supplier list.`,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+
     setIsAddEditSupplierDialogOpen(false);
     setEditingSupplier(null);
   };
 
-  const handleDeleteSupplier = (id: number) => {
-    setSuppliers(suppliers.filter((s) => s.id !== id));
-
-    toast({
-      title: "Supplier Deleted",
-      description:
-        "The supplier and associated TXs have been removed from the system.",
-      variant: "destructive",
-    });
+  const handleDeleteSupplier = async (id: number) => {
+    try {
+      await deleteSupplier(id);
+      setSuppliers(suppliers.filter((s) => s.id !== id));
+      toast({
+        title: "Supplier Deleted",
+        description:
+          "The supplier and associated TXs have been removed from the system.",
+        variant: "destructive",
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const averageRating =
