@@ -83,7 +83,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     setLowStockItems(products?.filter((p) => p.stockLevel < 10));
-  }, [products]);
+  }, [products, getTotalProducts]);
 
   useEffect(() => {
     const fetch = async () => {

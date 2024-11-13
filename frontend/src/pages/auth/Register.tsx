@@ -207,7 +207,7 @@ export default function Register() {
           </div>
 
           <Button type="submit" className="w-full" isLoading={isLoading}>
-            Sign in
+            Sign Up
           </Button>
           <div className="text-sm ">
             <span className="font-medium mr-2 text-stone-600 hover:text-stone-500">

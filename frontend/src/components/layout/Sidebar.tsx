@@ -43,7 +43,7 @@ export function Sidebar() {
           )}
         </div>
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          // onClick={() => setIsOpen(!isOpen)}
           className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           <Menu className="h-5 w-5 text-gray-500" />
