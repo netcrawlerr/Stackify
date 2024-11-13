@@ -1,3 +1,4 @@
+using backend.DTO;
 using backend.DTO.Supplier;
 using backend.Models;
 
@@ -5,6 +6,23 @@ namespace backend.Mappers;
 
 public static class SupplierMappers
 {
+    public static SupplierDto ToSupplierDto(this Supplier supplierModel)
+    {
+        return new SupplierDto
+        {
+            Id = supplierModel.Id,
+            SupplierName = supplierModel.SupplierName,
+            Category = supplierModel.Category,
+            Rating = supplierModel.Rating,
+            Email = supplierModel.Email,
+            Phone = supplierModel.Phone,
+            DateJoined = supplierModel.DateJoined,
+            MostSoldItem = supplierModel.MostSoldItem,
+            Status = supplierModel.Status,
+            
+           
+        };
+    }
     public static Supplier ToSupplierFromCreateDto(
         this CreateSupplierRequestDto createSupplierRequestDto
     )
@@ -19,6 +37,21 @@ public static class SupplierMappers
             DateJoined = createSupplierRequestDto.DateJoined,
             MostSoldItem = createSupplierRequestDto.MostSoldItem,
             Status = createSupplierRequestDto.Status,
+        };
+    } public static Supplier ToSupplierFromUpdateDto(
+        this UpdateSupplierRequestDto updateSupplierRequestDto
+    )
+    {
+        return new Supplier
+        {
+            SupplierName = updateSupplierRequestDto.SupplierName,
+            Category = updateSupplierRequestDto.Category,
+            Rating = updateSupplierRequestDto.Rating,
+            Email = updateSupplierRequestDto.Email,
+            Phone = updateSupplierRequestDto.Phone,
+            DateJoined = updateSupplierRequestDto.DateJoined,
+            MostSoldItem = updateSupplierRequestDto.MostSoldItem,
+            Status = updateSupplierRequestDto.Status,
         };
     }
 }

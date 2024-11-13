@@ -38,4 +38,37 @@ public class SupplierController : ControllerBase
         );
         return Ok(supplier);
     }
+
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<IActionResult> UpdateSupplier([FromBody] UpdateSupplierRequestDto updateSupplierRequestDto,
+        [FromRoute] int id)
+    {
+        
+        var supplier = await _supplier.UpdateSupplierAsync(updateSupplierRequestDto,id);
+        
+        if (supplier == null)
+        {
+            return NotFound("Supplier Not Found!");
+        }
+        {
+            
+        }
+        return Ok(supplier.ToSupplierDto());
+    }
+    
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> DeleteSupplier([FromRoute] int id)
+    {
+        var supplierModel = await _supplier.DeleteSupplierAsync(id);
+
+        if (supplierModel == null)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+    
 }

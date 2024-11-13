@@ -1,6 +1,8 @@
 using backend.Data;
 using backend.DTO;
+using backend.DTO.Supplier;
 using backend.Interfaces;
+using backend.Migrations;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,9 +24,18 @@ public class SupplierRepository : ISupplier
         return supplierModel;
     }
 
-    public Task<Supplier> DeleteSupplierAsync(int id)
+    public async Task<Supplier> DeleteSupplierAsync(int id)
     {
-        throw new NotImplementedException();
+        var supplierModel = await _context.Supplier.FirstOrDefaultAsync(x => x.Id == id);
+
+        if (supplierModel == null)
+        {
+            return null;
+        }
+
+        _context.Supplier.Remove(supplierModel);
+        await _context.SaveChangesAsync();
+        return supplierModel;
     }
 
     public async Task<List<Supplier>?> GetAllSupliersAsync()
@@ -43,8 +54,24 @@ public class SupplierRepository : ISupplier
         throw new NotImplementedException();
     }
 
-    public Task<Supplier> UpdateSupplierAsync(SupplierDto supplierDto)
+    public async Task<Supplier> UpdateSupplierAsync(UpdateSupplierRequestDto updateSupplierRequestDto, int id)
     {
-        throw new NotImplementedException();
+        var supplier = await _context.Supplier.FirstOrDefaultAsync(s=>s.Id == id);
+        if (supplier == null)
+        {
+            return null;
+        }
+
+        supplier.SupplierName = updateSupplierRequestDto.SupplierName;
+        supplier.Category = updateSupplierRequestDto.Category;
+        supplier.Email = updateSupplierRequestDto.Email;
+        supplier.Phone = updateSupplierRequestDto.Phone;
+        supplier.Rating = updateSupplierRequestDto.Rating;
+        supplier.Status = updateSupplierRequestDto.Status;
+        supplier.DateJoined = updateSupplierRequestDto.DateJoined;
+        supplier.MostSoldItem = updateSupplierRequestDto.MostSoldItem;
+        
+        await _context.SaveChangesAsync();
+        return supplier;
     }
 }
