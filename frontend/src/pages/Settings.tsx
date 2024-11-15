@@ -1,16 +1,30 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { usePageTitle } from "@/hooks/usePageTitle";
+import { useAuthStore } from "@/store/auth";
 
-export default function Settings() {
+const Settings = () => {
+  usePageTitle("Settings");
+
+  const user = useAuthStore((state) => state.user);
+
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage your account and preferences</p>
+        <h1 className="text-3xl font-bold mt-5">Settings</h1>
+        <p className="text-muted-foreground">
+          Manage your account and preferences
+        </p>
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
@@ -30,34 +44,29 @@ export default function Settings() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" placeholder="John" />
+                  <Input
+                    id="firstName"
+                    placeholder="John"
+                    value={user?.firstName}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Doe" />
+                  <Input
+                    id="lastName"
+                    placeholder="Doe"
+                    value={user?.lastName}
+                  />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="john@example.com" />
-              </div>
-              <Button>Save Changes</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Company Information</CardTitle>
-              <CardDescription>Update your company details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="companyName">Company Name</Label>
-                <Input id="companyName" placeholder="Acme Inc." />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input id="address" placeholder="123 Business St." />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={user?.email}
+                />
               </div>
               <Button>Save Changes</Button>
             </CardContent>
@@ -68,7 +77,9 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>Choose what notifications you receive</CardDescription>
+              <CardDescription>
+                Choose what notifications you receive
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -146,4 +157,6 @@ export default function Settings() {
       </Tabs>
     </div>
   );
-}
+};
+
+export default Settings;
