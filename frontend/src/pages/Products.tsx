@@ -56,6 +56,7 @@ import { useProductStore } from "@/store/products";
 import { redirect } from "react-router-dom";
 import { useStockStore } from "@/store/stocks";
 import axios from "axios";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function Products() {
   const categories = useCategoryStore((state) => state.categories);
@@ -199,7 +200,7 @@ export default function Products() {
     (sum, product) => sum + product.totalValue,
     0
   );
-
+  usePageTitle("Products");
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Product Inventory</h1>

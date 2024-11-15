@@ -55,7 +55,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { useCategoryStore } from "@/store/category";
 import { useSupplierStore } from "@/store/supplier";
 import { toast } from "@/hooks/use-toast";
@@ -251,6 +252,7 @@ export default function SuppliersPage() {
 
   const categories = useCategoryStore((state) => state.categories);
 
+  usePageTitle("Suppliers");
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">Suppliers</h1>
@@ -645,7 +647,6 @@ function SupplierForm({
     e.preventDefault();
     onSubmit(formData);
   };
-
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid gap-4 py-4">

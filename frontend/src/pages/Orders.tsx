@@ -22,6 +22,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Search, Filter, ChevronDown, MoreHorizontal } from "lucide-react"
 import { DateRange } from "react-day-picker"
+import { usePageTitle } from '@/hooks/usePageTitle'
 
  
 const orders = [
@@ -178,7 +179,7 @@ function OrderList() {
       setSortDirection('asc')
     }
   }
-
+  usePageTitle("Orders");
   return (
     <div>
       <div className="mb-6">

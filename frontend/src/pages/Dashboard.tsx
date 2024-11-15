@@ -3,7 +3,10 @@ import {
   ShoppingCart,
   AlertTriangle,
   DollarSign,
+  TrendingUp,
+  Activity,
   Table,
+  User,
 } from "lucide-react";
 import { useAuthStore } from "../store/auth";
 import { useProductStore } from "@/store/products";
@@ -51,11 +54,6 @@ const recentActivity = [
 ];
 
 const colors = ["#8890d8", "#82ca9d", "#ff8042", "#ff6384", "#00049F"];
-// const lowStockItems = [
-//   { id: 1, name: "Product A", currentStock: 5, threshold: 10 },
-//   { id: 2, name: "Product B", currentStock: 3, threshold: 15 },
-//   { id: 3, name: "Product C", currentStock: 8, threshold: 20 },
-// ];
 
 export default function Dashboard() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -66,11 +64,8 @@ export default function Dashboard() {
   const [lowStockItems, setLowStockItems] = useState(productsStore || []);
 
   const lowStockItemsCount = useProductStore((state) => state.lowStockItems());
-  console.log("products in dashboard", products);
 
   const lowItems = products?.filter((p) => p.stockLevel < 10);
-
-  console.log("low items", lowItems);
 
   const chartData = products
     .filter((product) => product.stockLevel < 10)
@@ -78,8 +73,6 @@ export default function Dashboard() {
       name: product.name,
       stockLevel: product.stockLevel,
     }));
-
-  console.log("chart data", chartData);
 
   useEffect(() => {
     setLowStockItems(products?.filter((p) => p.stockLevel < 10));
@@ -92,24 +85,16 @@ export default function Dashboard() {
       if (total !== undefined) {
         setTotalProducts(total);
       }
-      console.log("Total Products Count:", total);
     };
     fetch();
   }, [getTotalProducts]);
 
-  console.log("Is authenticated: ", isAuthenticated);
-
   return (
     <div className={"min-h-screen"}>
-      <div className="  min-h-screen">
-        <header className=" shadow">
-          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <h1 className="text-3xl text-stone-900 font-bold  ">Dashboard</h1>
-          </div>
-        </header>
+      <div className="min-h-screen">
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            <div>
+            <div className="border p-5 hover:cursor-pointer">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="text-lg font-medium flex justify-center items-center ">
                   Total Products
@@ -123,7 +108,8 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            <div>
+
+            <div className="border p-5 hover:cursor-pointer">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="text-lg font-medium flex justify-center items-center ">
                   Active Orders
@@ -137,7 +123,8 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            <div>
+
+            <div className="border p-5 hover:cursor-pointer">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="text-lg font-medium flex justify-center items-center ">
                   Low Stock Alerts
@@ -151,7 +138,8 @@ export default function Dashboard() {
                 </p>
               </div>
             </div>
-            <div>
+
+            <div className="border p-5 hover:cursor-pointer">
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="text-lg font-medium flex justify-center items-center ">
                   Total Revenue
@@ -162,6 +150,21 @@ export default function Dashboard() {
                 <div className="text-2xl font-bold">$45,231.89</div>
                 <p className="text-xs text-muted-foreground">
                   +20.1% from last month
+                </p>
+              </div>
+            </div>
+
+            <div className="border p-5 hover:cursor-pointer">
+              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="text-lg font-medium flex justify-center items-center ">
+                  Monthly Sales
+                  <TrendingUp className="h-4 w-4 mx-3 text-muted-foreground" />
+                </div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold">1,200</div>
+                <p className="text-xs text-muted-foreground">
+                  +15% increase this month
                 </p>
               </div>
             </div>
@@ -193,7 +196,6 @@ export default function Dashboard() {
                           />
                         ))}
                       </Pie>
-                      {/* Add the Tooltip component here */}
                       <Tooltip
                         formatter={(value, name, entry) => [
                           `Stock Level: ${value}`,
@@ -251,7 +253,7 @@ export default function Dashboard() {
                             {activity.time}
                           </p>
                         </div>
-                        <p className="text-lg text-gray-500 ">
+                        <p className="text-md text-gray-500">
                           {activity.details}
                         </p>
                       </div>
