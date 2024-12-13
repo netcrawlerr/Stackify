@@ -64,3 +64,4 @@ dotnet-tools.json
 backend/appsettings.json
 backend/appsettings.json
 backend/appsettings.json
+backend/.vs
