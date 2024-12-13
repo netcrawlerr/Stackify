@@ -5,6 +5,13 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "backend", "backend\backend.csproj", "{8824EC81-46FD-40D1-8ABF-DA2602FFD1C7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stackify.Api", "Stackify.Api\Stackify.Api.csproj", "{3F8F5D2C-B83F-4D9D-89F3-20E74F0F0107}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stackify.Infrastructure", "Stackify.Infrastructure\Stackify.Infrastructure.csproj", "{B1253C1A-3D72-4629-9B44-FB8CDA3959BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stackify.Core", "Stackify.Core\Stackify.Core.csproj", "{6C7D99A3-DB09-4D60-91B3-45F4F4FB9E62}"
+EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
