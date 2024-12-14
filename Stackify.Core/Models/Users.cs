@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace backend.Models;
+namespace Stackify.Core.Models;
 
 public class Users : IdentityUser { 
 

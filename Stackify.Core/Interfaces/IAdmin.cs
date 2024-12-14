@@ -1,8 +1,4 @@
-using backend.DTO;
-using backend.Models;
-using Microsoft.AspNetCore.Identity;
-
-namespace backend.Interfaces;
+namespace Stackify.Core.Interfaces;
 
 public interface IAdmin
 {

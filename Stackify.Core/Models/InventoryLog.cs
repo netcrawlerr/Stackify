@@ -1,4 +1,4 @@
-namespace backend.Models;
+namespace Stackify.Core.Models;
 
 public class InventoryLog
 {

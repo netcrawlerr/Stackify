@@ -1,6 +1,4 @@
-using backend.Models;
-
-namespace backend.Interfaces
+namespace Stackify.Core.Interfaces
 {
     public interface ITokenService
     {

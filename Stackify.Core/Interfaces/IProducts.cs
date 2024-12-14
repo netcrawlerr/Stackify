@@ -1,7 +1,4 @@
-using backend.Models;
-using backend.DTO;
-
-namespace backend.Interfaces;
+namespace Stackify.Core.Interfaces;
 
 public interface IProducts
 {
