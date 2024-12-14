@@ -1,4 +1,4 @@
-namespace backend.DTO
+namespace Stackify.Application.DTO.Supplier
 {
     public class SupplierDto
     {

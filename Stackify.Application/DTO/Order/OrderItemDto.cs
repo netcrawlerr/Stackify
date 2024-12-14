@@ -1,4 +1,4 @@
-namespace backend.DTO
+namespace Stackify.Application.DTO.Order
 {
     public class OrderItemDto
     {

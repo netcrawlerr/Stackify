@@ -1,4 +1,4 @@
-namespace backend.DTO.Catergories;
+namespace Stackify.Application.DTO.Categories;
 
 public class CreateCategoryRequestDto
 {
