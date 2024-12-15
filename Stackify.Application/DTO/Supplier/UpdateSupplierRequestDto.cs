@@ -1,4 +1,4 @@
-namespace backend.DTO.Supplier;
+namespace Stackify.Application.DTO.Supplier;
 
 public class UpdateSupplierRequestDto
 {

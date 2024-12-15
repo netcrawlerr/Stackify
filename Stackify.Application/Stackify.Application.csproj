@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Stackify.Core\Stackify.Core.csproj" />
+      <ProjectReference Include="..\Stackify.Infrastructure\Stackify.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

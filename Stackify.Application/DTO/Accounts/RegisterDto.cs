@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace backend.DTO
+namespace Stackify.Application.DTO.Accounts
 {
     public class RegisterDto
     {

@@ -1,4 +1,4 @@
-namespace backend.DTO
+namespace Stackify.Application.DTO.Stock
 {
     public class StockTransactionDto
     {
