@@ -1,9 +1,6 @@
-using backend.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+using Stackify.Core.Models;
 
-namespace backend.Data;
+namespace Stackify.Infrastructure.Data;
 
 public class ApplicationDBContext : IdentityDbContext<Users>
 {
