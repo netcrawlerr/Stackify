@@ -1,4 +1,5 @@
 *.cs linguist-detectable=true
+src/components/layout/*.ts linguist-detectable=true
+src/pages/**/*.tsx linguist-detectable=false
+src/components/**/*.tsx linguist-detectable=false
 *.ts linguist-detectable=false
-src/components/layout/*.tsx linguist-detectable=true
-
