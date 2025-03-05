@@ -1,5 +1,5 @@
 using backend.Data;
-using backend.DTO;
+using backend.DTO.Catergories;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.AspNetCore.Http.HttpResults;

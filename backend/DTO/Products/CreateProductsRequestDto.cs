@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace backend.DTO;
+namespace backend.DTO.Products;
 
 public class CreateProductsRequestDto
 {
@@ -17,9 +17,9 @@ public class CreateProductsRequestDto
     public int StockLevel { get; set; }
 
     [Required]
-    public int CategoryId { get; set; }  
+    public int CategoryId { get; set; }
 
-    
-    public string Status { get; set; } = string.Empty ; 
+
+    public string Status { get; set; } = string.Empty;
 
 }

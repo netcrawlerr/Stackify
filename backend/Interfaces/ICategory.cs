@@ -1,4 +1,4 @@
-using backend.DTO;
+using backend.DTO.Catergories;
 using backend.Models;
 
 namespace backend.Interfaces;

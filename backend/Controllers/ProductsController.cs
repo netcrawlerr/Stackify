@@ -1,4 +1,4 @@
-using backend.DTO;
+using backend.DTO.Products;
 using backend.Interfaces;
 using backend.Mappers;
 using backend.Models;

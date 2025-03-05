@@ -1,4 +1,5 @@
 using backend.DTO;
+using backend.DTO.Accounts;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.AspNetCore.Identity;

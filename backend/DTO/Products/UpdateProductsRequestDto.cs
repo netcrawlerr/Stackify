@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace backend.DTO;
+namespace backend.DTO.Products;
 
 public class UpdateProductsRequestDto
 {

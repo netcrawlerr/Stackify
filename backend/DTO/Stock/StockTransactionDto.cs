@@ -1,4 +1,4 @@
-namespace backend.DTO
+namespace backend.DTO.Stock
 {
     public class StockTransactionDto
     {
