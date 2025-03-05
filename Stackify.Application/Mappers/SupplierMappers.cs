@@ -1,3 +1,6 @@
+using Stackify.Application.DTO.Supplier;
+using Stackify.Core.Models;
+
 namespace Stackify.Application.Mappers;
 
 public static class SupplierMappers

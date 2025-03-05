@@ -1,3 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Stackify.Application.DTO.Products;
+using Stackify.Application.Interfaces;
+using Stackify.Core.Models;
+using Stackify.Infrastructure.Data;
+
 namespace Stackify.Application.Repository;
 
 public class ProductsRepository : IProducts
@@ -76,5 +82,10 @@ public class ProductsRepository : IProducts
         await _context.SaveChangesAsync();
 
         return existingProduct;
+    }
+
+    Task<Products?> IProducts.UpdateProductsAsync(UpdateProductsRequestDto updateProductsRequestDto, int id)
+    {
+        throw new NotImplementedException();
     }
 }

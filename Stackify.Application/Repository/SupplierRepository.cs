@@ -1,3 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Stackify.Application.DTO.Supplier;
+using Stackify.Application.Interfaces;
+using Stackify.Core.Models;
+using Stackify.Infrastructure.Data;
+
 namespace Stackify.Application.Repository;
 
 public class SupplierRepository : ISupplier
@@ -65,5 +71,10 @@ public class SupplierRepository : ISupplier
         
         await _context.SaveChangesAsync();
         return supplier;
+    }
+
+    Task<Supplier> ISupplier.UpdateSupplierAsync(UpdateSupplierRequestDto updateSupplierRequestDto, int id)
+    {
+        throw new NotImplementedException();
     }
 }

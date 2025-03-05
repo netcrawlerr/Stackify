@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Stackify.Application.Interfaces;
+using Stackify.Core.Models;
+using Stackify.Infrastructure.Data;
+
 namespace Stackify.Application.Repository;
 
 public class StockTransactionRepository : IStockTransaction

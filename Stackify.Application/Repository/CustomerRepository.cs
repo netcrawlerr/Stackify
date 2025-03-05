@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Stackify.Application.Interfaces;
+using Stackify.Core.Models;
+using Stackify.Infrastructure.Data;
+
 namespace Stackify.Application.Repository;
 
 public class CustomerRepository : ICustomer
@@ -24,5 +29,20 @@ public class CustomerRepository : ICustomer
     public async Task<Customer> GetCustomerByIdAsync(int id)
     {
         return await _context.Customer.FindAsync(id);
+    }
+
+    Task<Customer> ICustomer.CreateCustomerAsync(Customer customerModel)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<List<Customer>> ICustomer.GetAllCustomersAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<Customer> ICustomer.GetCustomerByIdAsync(int id)
+    {
+        throw new NotImplementedException();
     }
 }

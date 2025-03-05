@@ -1,3 +1,6 @@
+using Stackify.Application.DTO.Products;
+using Stackify.Core.Models;
+
 namespace Stackify.Application.Mappers;
 
 public static class ProductsMappers
@@ -8,7 +11,7 @@ public static class ProductsMappers
         {
             Id = productsModel.Id,
             Name = productsModel.Name,
-           
+
         };
     }
 

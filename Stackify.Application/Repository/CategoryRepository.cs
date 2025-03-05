@@ -1,5 +1,9 @@
-using Stackify.Core.Interfaces;
+
+using Microsoft.EntityFrameworkCore;
+using Stackify.Application.DTO.Categories;
+using Stackify.Application.Interfaces;
 using Stackify.Core.Models;
+using Stackify.Infrastructure.Data;
 
 namespace Stackify.Application.Repository
 {
@@ -56,6 +60,11 @@ namespace Stackify.Application.Repository
             await _context.SaveChangesAsync();
 
             return category;
+        }
+
+        Task<Categories> ICategory.UpdateCategoryAsync(CategoriesDto categoriesDto, int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
