@@ -1,3 +1,4 @@
 *.cs linguist-detectable=true
 src/pages/*.tsx linguist-detectable=false
+src/components/*.tsx linguist-detectable=false
 *.ts linguist-detectable=true
